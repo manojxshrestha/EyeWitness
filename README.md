@@ -113,6 +113,53 @@ cd /tmp && ls
 cd report*
 firefox-esr report.html &
 ```
-###### Call to Action:
-I'd love for EyeWitness to identify more default credentials of various web applications.  
-As you find a device which utilizes default credentials, please e-mail me the source code of the index page and the default creds so I can add it in to EyeWitness!
+###### Troubleshooting:
+
+Install `Xvfb` on your Kali Linux system and ensure it works with EyeWitness,
+
+### Installation Steps
+1. **Install Xvfb**:
+   ```bash
+   sudo apt update
+   sudo apt install xvfb
+   ```
+
+2. **Verify Installation**:
+   Check if `Xvfb` is installed:
+   ```bash
+   Xvfb -h
+   ```
+   This should display the help menu with available options.
+
+3. **Install EyeWitness Dependencies** (if not already done):
+   ```bash
+   sudo apt install python3 python3-pip firefox-geckodriver
+   pip3 install --user -r /usr/share/eyewitness/requirements.txt
+   ```
+
+### Post-Installation Steps to Ensure Xvfb Works
+1. **Fix `/tmp/.X11-unix` Permissions**:
+   ```bash
+   sudo umount /tmp/.X11-unix
+   sudo rmdir /tmp/.X11-unix
+   sudo mkdir -p /tmp/.X11-unix
+   sudo chmod 1777 /tmp/.X11-unix
+   sudo chown root:root /tmp/.X11-unix
+   ```
+
+2. **Clean Up Stale Lock Files**:
+   ```bash
+   sudo rm -f /tmp/.X0-lock
+   sudo killall Xvfb
+   ```
+
+3. **Start Xvfb**:
+   ```bash
+   Xvfb :100 -screen 0 1280x720x16 -nolisten tcp &> /home/pwn/xvfb.log &
+   ```
+
+4. **Run EyeWitness**:
+   ```bash
+   export DISPLAY=:100
+   eyewitness -f dnsx.txt --web
+   ```
